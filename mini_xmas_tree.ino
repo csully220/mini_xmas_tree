@@ -17,76 +17,98 @@
   by Arturo Guadalupi
 */
 
+#define ACTIVATE 3
+
+#define YEL1_L 4
+#define YEL1_R 5
+#define YEL2_L 6
+#define YEL2_R 7
+#define YEL3_L 8
+#define YEL3_R 9
+#define GRN_L A0
+#define GRN_R A1
+
 #define PRESTAGE 10
 #define STAGE 11
-#define YEL1 4
-#define YEL2 5
-#define YEL3 6
-#define GRN 7
-#define RED 8
-
-#define ACTIVATE 2
-
 
 bool start_seq = false;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
   
+  pinMode(ACTIVATE, INPUT_PULLUP);
   pinMode(PRESTAGE, OUTPUT);
   pinMode(STAGE, OUTPUT);
-  pinMode(YEL1, OUTPUT);
-  pinMode(YEL2, OUTPUT);
-  pinMode(YEL3, OUTPUT);
-  pinMode(GRN, OUTPUT);
+  pinMode(YEL1_L, OUTPUT);
+  pinMode(YEL1_R, OUTPUT);
+  pinMode(YEL2_L, OUTPUT);
+  pinMode(YEL2_R, OUTPUT);
+  pinMode(YEL3_L, OUTPUT);
+  pinMode(YEL3_R, OUTPUT);
+  pinMode(GRN_L, OUTPUT);
+  pinMode(GRN_R, OUTPUT);
 
-  pinMode(ACTIVATE, INPUT_PULLUP);
-
- while(1) {
-    digitalWrite(PRESTAGE, HIGH);
-    digitalWrite(STAGE, HIGH);
-    delay(2000);
-    digitalWrite(PRESTAGE, LOW);
-    digitalWrite(STAGE, LOW);
-    delay(2000);
-  }
-
-  
-  for(int i=0; i < 3; i++) {
-    digitalWrite(PRESTAGE, HIGH);
-    digitalWrite(STAGE, HIGH);
-    delay(1000);
-    digitalWrite(PRESTAGE, LOW);
-    digitalWrite(STAGE, LOW);
-    delay(500);
-  }
+  digitalWrite(PRESTAGE, LOW);
+  digitalWrite(STAGE, LOW);
+  digitalWrite(YEL1_L, LOW);
+  digitalWrite(YEL1_R, LOW);
+  digitalWrite(YEL2_L, LOW);
+  digitalWrite(YEL2_R, LOW);
+  digitalWrite(YEL3_L, LOW);
+  digitalWrite(YEL3_R, LOW);
+  digitalWrite(GRN_L, LOW);
+  digitalWrite(GRN_R, LOW);
+    
+  /*for(int i=0; i < 3; i++) {
+    digitalWrite(YEL1_L, HIGH);
+    digitalWrite(YEL1_R, HIGH);
+    delay(200);
+    digitalWrite(YEL1_L, LOW);
+    digitalWrite(YEL1_R, LOW);
+    digitalWrite(YEL2_L, HIGH);
+    digitalWrite(YEL2_R, HIGH);
+    delay(200);
+    digitalWrite(YEL2_L, LOW);
+    digitalWrite(YEL2_R, LOW);
+    digitalWrite(YEL3_L, HIGH);
+    digitalWrite(YEL3_R, HIGH);
+    delay(200);
+    digitalWrite(YEL3_L, LOW);
+    digitalWrite(YEL3_R, LOW);
+  }*/
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  digitalWrite(PRESTAGE, LOW);
-  digitalWrite(STAGE, LOW);
-  digitalWrite(YEL1, LOW);
-  digitalWrite(YEL2, LOW);
-  digitalWrite(YEL3, LOW);
-  digitalWrite(GRN, LOW);
   
-  start_seq = digitalRead(ACTIVATE);
+  start_seq = !digitalRead(ACTIVATE);
   if (start_seq) {
     digitalWrite(PRESTAGE, HIGH);
-    delay(2000);
+    delay(4000);
     digitalWrite(STAGE, HIGH);
-    delay(490);
-    digitalWrite(YEL1, HIGH);
-    delay(490);
-    digitalWrite(YEL1, LOW);
-    digitalWrite(YEL2, HIGH);
-    delay(490);
-    digitalWrite(YEL2, LOW);
-    digitalWrite(YEL3, HIGH);
-    delay(490);
-    digitalWrite(YEL3, LOW);
-    digitalWrite(GRN, HIGH);
-    delay(5000); 
+    delay(2000);
+    digitalWrite(YEL1_L, HIGH);
+    digitalWrite(YEL1_R, HIGH);
+    delay(500);
+    digitalWrite(YEL1_L, LOW);
+    digitalWrite(YEL1_R, LOW);
+    digitalWrite(YEL2_L, HIGH);
+    digitalWrite(YEL2_R, HIGH);
+    delay(500);
+    digitalWrite(YEL2_L, LOW);
+    digitalWrite(YEL2_R, LOW);
+    digitalWrite(YEL3_L, HIGH);
+    digitalWrite(YEL3_R, HIGH);
+    delay(500);
+    digitalWrite(YEL3_L, LOW);
+    digitalWrite(YEL3_R, LOW);
+    digitalWrite(GRN_L, HIGH);
+    digitalWrite(GRN_R, HIGH);
+    delay(5000);
+    digitalWrite(PRESTAGE, LOW);
+    digitalWrite(STAGE, LOW);
+    digitalWrite(GRN_L, LOW);
+    digitalWrite(GRN_R, LOW);
+    start_seq = false;
   }
 }
