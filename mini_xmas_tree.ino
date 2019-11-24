@@ -16,7 +16,7 @@
   modified 2 Sep 2016
   by Arturo Guadalupi
 */
-
+#define STEP_THRU 2
 #define ACTIVATE 3
 
 #define YEL1_L 4
@@ -25,18 +25,34 @@
 #define YEL2_R 7
 #define YEL3_L 8
 #define YEL3_R 9
-#define GRN_L A0
-#define GRN_R A1
+#define GRN_L 10
+#define GRN_R 11
 
-#define PRESTAGE 10
-#define STAGE 11
+#define PRESTAGE 12
+#define STAGE 13
 
 bool start_seq = false;
-
+bool step_thru = false;
+int lamp_row = 0;
 // the setup function runs once when you press reset or power the board
+
+void all_off(){
+  digitalWrite(PRESTAGE, LOW);
+  digitalWrite(STAGE, LOW);
+  digitalWrite(YEL1_L, LOW);
+  digitalWrite(YEL1_R, LOW);
+  digitalWrite(YEL2_L, LOW);
+  digitalWrite(YEL2_R, LOW);
+  digitalWrite(YEL3_L, LOW);
+  digitalWrite(YEL3_R, LOW);
+  digitalWrite(GRN_L, LOW);
+  digitalWrite(GRN_R, LOW);
+}
+
 void setup() {
   
   pinMode(ACTIVATE, INPUT_PULLUP);
+  pinMode(STEP_THRU, INPUT_PULLUP);
   pinMode(PRESTAGE, OUTPUT);
   pinMode(STAGE, OUTPUT);
   pinMode(YEL1_L, OUTPUT);
@@ -48,34 +64,8 @@ void setup() {
   pinMode(GRN_L, OUTPUT);
   pinMode(GRN_R, OUTPUT);
 
-  digitalWrite(PRESTAGE, LOW);
-  digitalWrite(STAGE, LOW);
-  digitalWrite(YEL1_L, LOW);
-  digitalWrite(YEL1_R, LOW);
-  digitalWrite(YEL2_L, LOW);
-  digitalWrite(YEL2_R, LOW);
-  digitalWrite(YEL3_L, LOW);
-  digitalWrite(YEL3_R, LOW);
-  digitalWrite(GRN_L, LOW);
-  digitalWrite(GRN_R, LOW);
+  all_off();
     
-  /*for(int i=0; i < 3; i++) {
-    digitalWrite(YEL1_L, HIGH);
-    digitalWrite(YEL1_R, HIGH);
-    delay(200);
-    digitalWrite(YEL1_L, LOW);
-    digitalWrite(YEL1_R, LOW);
-    digitalWrite(YEL2_L, HIGH);
-    digitalWrite(YEL2_R, HIGH);
-    delay(200);
-    digitalWrite(YEL2_L, LOW);
-    digitalWrite(YEL2_R, LOW);
-    digitalWrite(YEL3_L, HIGH);
-    digitalWrite(YEL3_R, HIGH);
-    delay(200);
-    digitalWrite(YEL3_L, LOW);
-    digitalWrite(YEL3_R, LOW);
-  }*/
 }
 
 // the loop function runs over and over again forever
@@ -110,5 +100,54 @@ void loop() {
     digitalWrite(GRN_L, LOW);
     digitalWrite(GRN_R, LOW);
     start_seq = false;
+  }
+  step_thru = !digitalRead(STEP_THRU);
+  while (step_thru) {
+    delay(200);
+    if (!digitalRead(ACTIVATE)){
+      lamp_row = 0;
+      all_off();
+      break;
+    }
+    if (!digitalRead(STEP_THRU)) {
+
+      switch (lamp_row) {
+        // PRESTAGE
+        case 0:
+          all_off();
+          digitalWrite(PRESTAGE, HIGH);
+          break;
+        case 1:
+          all_off();
+          digitalWrite(STAGE, HIGH);
+          break;
+        case 2:
+          all_off();
+          digitalWrite(YEL1_L, HIGH);
+          digitalWrite(YEL1_R, HIGH);
+          break;
+        case 3:
+          all_off();
+          digitalWrite(YEL2_L, HIGH);
+          digitalWrite(YEL2_R, HIGH);
+          break;
+        case 4:
+          all_off();
+          digitalWrite(YEL3_L, HIGH);
+          digitalWrite(YEL3_R, HIGH);
+          break;
+        case 5:
+          all_off();
+          digitalWrite(GRN_L, HIGH);
+          digitalWrite(GRN_R, HIGH);
+          break;
+        default:
+          lamp_row = 0;
+          step_thru = false;
+          all_off();
+          break;
+      }
+      lamp_row++;
+    }
   }
 }
