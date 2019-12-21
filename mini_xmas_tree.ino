@@ -16,17 +16,19 @@
   modified 2 Sep 2016
   by Arturo Guadalupi
 */
-#define STEP_THRU 2
-#define ACTIVATE 3
 
-#define YEL1_L 4
+#define DRT_SIG 2
+#define STEP_THRU A2
+#define ACTIVATE A3
+
+#define YEL1_L 5
 #define YEL1_R 5
-#define YEL2_L 6
+#define YEL2_L 7
 #define YEL2_R 7
-#define YEL3_L 8
+#define YEL3_L 9
 #define YEL3_R 9
 #define GRN_L 10
-#define GRN_R 11
+#define GRN_R 10
 
 #define PRESTAGE 12
 #define STAGE 13
@@ -34,6 +36,8 @@
 bool start_seq = false;
 bool step_thru = false;
 int lamp_row = 0;
+unsigned long rt_start = 0;
+bool rt_sig_rcvd = false;
 // the setup function runs once when you press reset or power the board
 
 void all_off(){
@@ -49,8 +53,18 @@ void all_off(){
   digitalWrite(GRN_R, LOW);
 }
 
+void drt_signal() {
+  if(!rt_sig_rcvd) {
+    Serial.println(millis() - rt_start);
+  }
+  rt_sig_rcvd = true;
+  //Serial.write("/n");
+}
+
 void setup() {
-  
+  Serial.begin(9600);
+  pinMode(DRT_SIG, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(DRT_SIG), drt_signal, LOW);
   pinMode(ACTIVATE, INPUT_PULLUP);
   pinMode(STEP_THRU, INPUT_PULLUP);
   pinMode(PRESTAGE, OUTPUT);
@@ -63,16 +77,15 @@ void setup() {
   pinMode(YEL3_R, OUTPUT);
   pinMode(GRN_L, OUTPUT);
   pinMode(GRN_R, OUTPUT);
-
+  rt_start = millis();
   all_off();
-    
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  
   start_seq = !digitalRead(ACTIVATE);
   if (start_seq) {
+    rt_sig_rcvd = false;
     digitalWrite(PRESTAGE, HIGH);
     delay(4000);
     digitalWrite(STAGE, HIGH);
@@ -94,6 +107,7 @@ void loop() {
     digitalWrite(YEL3_R, LOW);
     digitalWrite(GRN_L, HIGH);
     digitalWrite(GRN_R, HIGH);
+    rt_start = millis();
     delay(5000);
     digitalWrite(PRESTAGE, LOW);
     digitalWrite(STAGE, LOW);
